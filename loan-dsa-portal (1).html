@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Loan DSA Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Segoe+UI&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 14px; background-color: #ffffff; color: #4B0000; }
+    header { display: flex; justify-content: space-between; align-items: center; padding: 20px; background-color: #800000; color: white; }
+    header h1 { font-family: 'Orbitron', sans-serif; font-size: 20px; letter-spacing: 1px; }
+    .container { max-width: 700px; margin: 40px auto; padding: 20px; border-radius: 10px; background-color: #f9f9f9; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); position: relative; }
+    .container::before { content: "DSK ASSOCIATES"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 48px; color: rgba(0, 0, 0, 0.05); white-space: nowrap; pointer-events: none; z-index: 0; }
+    h2 { border-bottom: 2px solid #800000; padding-bottom: 10px; font-size: 18px; position: relative; z-index: 1; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; position: relative; z-index: 1; }
+    td, th { border: 1px solid #ddd; padding: 10px; }
+    th { background-color: #800000; color: white; text-align: left; }
+    .progress-container { margin: 30px 0; position: relative; z-index: 1; }
+    .progress-bar { display: flex; justify-content: space-between; position: relative; margin: 20px 0; }
+    .progress-bar::before { content: ""; position: absolute; top: 50%; left: 0; right: 0; height: 4px; background-color: #ddd; z-index: 0; }
+    .progress-step { position: relative; z-index: 1; text-align: center; width: 25%; }
+    .progress-step .circle { width: 20px; height: 20px; margin: 0 auto 8px; background-color: green; border-radius: 50%; }
+    .progress-step.incomplete .circle { background-color: green; }
+    .progress-step span { font-size: 12px; }
+    .login-form { max-width: 400px; margin: 40px auto; text-align: center; }
+    .login-form input { width: 90%; padding: 10px; margin: 10px 0; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; }
+    .login-form button { padding: 10px 20px; background-color: #800000; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    .loading { text-align: center; font-size: 16px; display: none; animation: pulse 1s infinite; }
+    @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+    #summary-container { display: none; }
+    .button-row { display: flex; justify-content: space-between; margin-top: 30px; gap: 10px; position: relative; z-index: 1; }
+    .button-row button { flex: 1; padding: 10px; background-color: #800000; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; color: white; }
+  </style>
+</head>
+<body>
+  <header><h1>DSK ASSOCIATES</h1></header>
+
+  <div class="login-form" id="login-form">
+    <h2>Login to View Loan Summary</h2>
+    <input type="text" id="phone" placeholder="Phone Number" />
+    <input type="text" id="application" placeholder="Application Number" />
+    <button onclick="submitLogin()">Submit</button>
+  </div>
+
+  <div class="loading" id="loading">Loading, please wait...</div>
+
+  <div class="container" id="summary-container">
+    <h2>Loan Progress</h2>
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-step"><div class="circle"></div><span>Loan Disbursed<br>25th May</span></div>
+        <div class="progress-step"><div class="circle"></div><span>Loan Processed<br>28th May</span></div>
+        <div class="progress-step"><div class="circle"></div><span>Settle of Funds<br>29th May</span></div>
+        <div class="progress-step"><div class="circle"></div><span>Funds Settled<br>1st June</span></div>
+      </div>
+    </div>
+
+    <h2>Loan Summary</h2>
+    <table>
+      <tr><th>Field</th><th>Details</th></tr>
+      <tr><td>Customer Name</td><td id="customer-name">Sujata Kurle</td></tr>
+      <tr><td>LAN</td><td>Generating</td></tr>
+      <tr><td>Loan Amount</td><td id="loan-amount">₹11,00,000</td></tr>
+      <tr><td>Interest Rate (MRI)</td><td>12.5%</td></tr>
+      <tr><td>EMI</td><td id="emi">₹23,260</td></tr>
+      <tr><td>Total Interest</td><td id="total-interest">₹5,74,685</td></tr>
+      <tr><td>Total Amount Payable</td><td id="total-payable">₹16,74,685</td></tr>
+      <tr><td>EMI Start Date</td><td>3rd July, 2025</td></tr>
+      <tr><td>EMI End Date</td><td>3rd June, 2031</td></tr>
+      <tr><td>Lending Partner</td><td>Kisetsu Finance</td></tr>
+      <tr><td>Loan Merchant</td><td>DSK Associates VI Finance</td></tr>
+      <tr><td>Mandate Account</td><td id="mandate-account">**** **** 7813</td></tr>
+      <tr><td>IFSC</td><td id="ifsc">KKBK0000655</td></tr>
+      <tr><td>Reflection Status</td><td id="reflection-status">Loading...</td></tr>
+    </table>
+
+    <div class="button-row">
+      <button onclick="showDocAlert('Welcome Kit')">Welcome Kit</button>
+      <button onclick="showDocAlert('Repayment Schedule')">Repayment Schedule</button>
+      <button onclick="showDocAlert('Form CF117')">Form CF117</button>
+    </div>
+  </div>
+
+  <script>
+    function showDocAlert(docName) {
+      alert(`${docName} will be sent to your registered e-mail address.`);
+    }
+
+    function getReflectionStatus(phone, application) {
+      const userKey = `reflectionStartTime_${phone}_${application}`;
+      const now = new Date();
+      let startTime;
+
+      const savedStart = localStorage.getItem(userKey);
+      if (savedStart) {
+        startTime = new Date(savedStart);
+      } else {
+        startTime = now;
+        localStorage.setItem(userKey, startTime.toISOString());
+      }
+
+      const endTime = new Date(startTime.getTime() + 1.5 * 60 * 60 * 1000);
+      if (now <= endTime) {
+        return "Processed to beneficiary's bank account awaiting reflection confirmation";
+      } else {
+        return "4th June Morning Batch As Per Customer's Bank Response To Escrow";
+      }
+    }
+
+    function submitLogin() {
+      const phone = document.getElementById("phone").value.trim();
+      const application = document.getElementById("application").value.trim();
+      let customerData = null;
+
+      if (phone === "7506767273" && application === "65536792") {
+        customerData = {
+          name: "Sujata Kurle",
+          loanAmount: "₹11,00,000",
+          emi: "₹21,792",
+          totalInterest: "₹4,69,045",
+          totalPayable: "₹15,69,045",
+          mandateAccount: "**** **** 7813 (Reflection Locked 🔒 3rd June 13:00 IST)",
+          ifsc: "KKBK0000655",
+          fundsSettledDate: "1st June (Settled)"
+        };
+      } else if (phone === "8793299681" && application === "65536792") {
+        customerData = {
+          name: "Mandar Nandkumar Rangole",
+          loanAmount: "₹44,00,000",
+          emi: "₹87,169",
+          totalInterest: "₹18,76,567",
+          totalPayable: "₹62,76,181",
+          mandateAccount: "919010076184741 (Reflection Unlocked 🔓 3rd June 13:00 IST)",
+          ifsc: "UTIB0003182",
+          fundsSettledDate: "1st June (Settled)"
+        };
+      }
+
+      if (customerData) {
+        document.getElementById("login-form").style.display = "none";
+        document.getElementById("loading").style.display = "block";
+
+        setTimeout(() => {
+          document.getElementById("loading").style.display = "none";
+          document.getElementById("summary-container").style.display = "block";
+
+          document.querySelector("#customer-name").textContent = customerData.name;
+          document.querySelector("#loan-amount").textContent = customerData.loanAmount;
+          document.querySelector("#emi").textContent = customerData.emi;
+          document.querySelector("#total-interest").textContent = customerData.totalInterest;
+          document.querySelector("#total-payable").textContent = customerData.totalPayable;
+          document.querySelector("#mandate-account").textContent = customerData.mandateAccount;
+          document.querySelector("#ifsc").textContent = customerData.ifsc;
+
+          document.querySelector("#reflection-status").textContent = getReflectionStatus(phone, application);
+
+          const lastStep = document.querySelectorAll(".progress-step")[3];
+          lastStep.classList.add("incomplete");
+          lastStep.innerHTML = `<div class="circle"></div><span>Funds Settled<br>${customerData.fundsSettledDate}</span>`;
+        }, 3000);
+      } else {
+        alert("Invalid phone number or application number. Please try again.");
+      }
+    }
+  </script>
+</body>
+</html>
